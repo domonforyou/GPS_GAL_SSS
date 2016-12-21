@@ -789,6 +789,7 @@ extern int main_signal(int min, int Is_Simple_Way){
     int i,j,k,dots,ok_nums;
     //char *wr_buf;
     nav_t nav={0};
+	//动态模式用户坐标存储结构体
 	LLH *llh=NULL;
     _init_paras gal_paras;
     T_MODEL T[MAX_SAT];//set sat nums to make

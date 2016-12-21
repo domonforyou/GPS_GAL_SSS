@@ -67,7 +67,7 @@ void read_e1b_e1c(const char *file_e1b, const char *file_e1c, _ca_code *e1b, _ca
         sat_num=0;
     }
 }
-
+//MAX_KML_BUF大小对仿真时间有所限制，还有一处导航电文长度对仿真时间也有所限制，这边default<3mins
 int prase_mkl(const char *file_path, int size, LLH *llh){
 	FILE *fp;
     int sat_id,sat_num=0;

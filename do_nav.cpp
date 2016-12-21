@@ -567,9 +567,10 @@ void encode_word5(int prn, int sv_id, nav_t *nav, u_int8 *word){
     ai2 =ROUND(nav->ion_gal[2]/P2_15);
     bgd1=ROUND(eph->tgd[0]/P2_32);
     bgd2=ROUND(eph->tgd[1]/P2_32);
-    oshs1 =(eph->svh>>4)&3;
-    osdvs1=(eph->svh>>3)&1;//??????????? TODO::
-    week=eph->week%4092;
+    //oshs1 =(eph->svh>>4)&3;
+    //osdvs1=(eph->svh>>3)&1;//??????????? TODO::
+    oshs1=oshs2=osdvs1=osdvs2=0;
+	week=eph->week%4092;
     tow=g_tow;
     setbitu(word,i,6,PAGE_TYPE5);       i+=6;
     setbits(word,i,11,ai0);             i+=11;
@@ -860,11 +861,13 @@ static unsigned char * Do_nav_by_time(int mins, int prn, nav_t *nav){
             if(sv_id == 36)sv_id=0;
         }
     }
+	/*******************debugggggggggggggggg*****************/
     for(i=0;i<10;i++){
         unsigned char debug=ret_nav[i+250];
         unsigned char debug2=ret_nav[i+1500];
         printf("%d", debug);
     }
+	/******************* debug end **************************/
     return ret_nav;
 }
 /*****************************************
@@ -885,12 +888,14 @@ static int readrawnav(const char *nav_file, nav_t *nav, _init_paras *paras, int 
     gtime_t tuser;
     FILE *fp=NULL;
 
+	/*******************debugggggggggggggggg*****************/
     FILE *fp_w=NULL;
     char local_char_nav[9001]={0};
-    if (!(fp_w=fopen("20161025nav","w"))) {
-        fprintf(stderr,"raw 1010 nav file open error : 201610nav \n");
+    if (!(fp_w=fopen("20161025nav_debug","w"))) {
+        fprintf(stderr,"raw 1010 nav file open error : 20161025nav_debug \n");
         return -1;
     }
+	/******************* debug end **************************/
 
     if (!(fp=fopen(nav_file,"r"))) {
         fprintf(stderr,"raw nav file open error : %s\n",nav_file);
