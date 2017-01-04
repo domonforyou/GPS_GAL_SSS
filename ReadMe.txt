@@ -39,6 +39,6 @@ StdAfx.h，StdAfx.cpp
 1.main_signal（）为主要功能函数，可产生GPS/Galileo的单独系统或组合的可定位卫星导航中频信号，
 信号参数（采样率，中频等）可更改，默认2bit量化。
 
-2.do_*.cpp,do_*.h 为实现的相关功能文件，关于模拟信号生成的流程和主要的数据结构可参见此链接
-http://blog.luckyworm.cn/2016/12/06/galileo/，
+2.do_*.cpp,do_*.h 为实现的相关功能文件，关于模拟信号生成的流程和主要的数据结构可参见此[链接]
+(http://blog.luckyworm.cn/2016/12/06/galileo/)
 其他文件大部分取自开源项目RTKLIB
