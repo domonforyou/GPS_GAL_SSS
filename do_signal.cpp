@@ -54,8 +54,8 @@ int INIT_PARAS(_init_paras *paras, int final_second){
     paras->azel = 10;//卫星最低仰角
     paras->transTime_est = 0.085;//传输时间估计
     paras->mstoProcess = final_second;//生成信号时长
-    paras->fs = 2e7;//5.72e6;//信号采样率
-    paras->fo = 4123968;//4e7/7-(3.542e7 - 2.80e8/9);//中频载波频率
+    paras->fs = 5.72e6; //2e7;//5.72e6;//信号采样率
+    paras->fo = 4e7/7-(3.542e7 - 2.80e8/9);//4123968;//4e7/7-(3.542e7 - 2.80e8/9);//中频载波频率
     paras->codeFreqbasis = 1.023e6;//测距吗速率，1.023M HZ,码长 4092,周期 4ms 左右
 	paras->codePeriod = 1/paras->codeFreqbasis;
     paras->codeLength = 4092;//码长 4092
@@ -281,45 +281,45 @@ while(flag){
     r = geodist(rs, rr, e);//初始真实距离
     traveltime= r / CLIGHT;//初始传播时间
     tau=fabs(traveltime-delt_t);
-        if(tau<1e-9){
-            //建立传播过程中误差模型
-            r = topocent(rs,rr,userP,azel);//角度
-            //对流层延时
-            dtrp = tropmodel(gpst2time(week,t),userP,azel,0.5);//0.5 relative humidity
-			dtrp = 0;
+    if(tau<1e-9){
+        //建立传播过程中误差模型
+        r = topocent(rs,rr,userP,azel);//角度
+        //对流层延时
+        dtrp = tropmodel(gpst2time(week,t),userP,azel,0.5);//0.5 relative humidity
+		dtrp = 0;
 //             trop = 2.47/(sin(el * dtr)+0.0121);
 //             //电离层延时
 //             iono = ionospheric(el*dtr, az*dtr,userP,t, eph);//sec
 //             //码传播延时
 //             codeTime=traveltime+trop/c+iono/c-satClkCorr;%
 //             carrierTime=traveltime+trop/c-iono/c-satClkCorr;
-			sv_time->dist = r;
-            sv_time->codeTime=traveltime+dtrp/CLIGHT-dts[0];//
-            sv_time->carrierTime=traveltime+dtrp/CLIGHT-dts[0];
-            sv_time->t_svCodeTime=t-sv_time->codeTime;//准确的发射时刻
-            sv_time->t_svCarrierTime=t-sv_time->carrierTime;//准确的发射时刻
-            //计算多普勒初值sat speed ,rs[3-5]
-            eph2pos2speed(gpst2time(week,t_sv0),eph,rs,dts,&var);
-			//satpos(t_sv0,t_sv0,sat,EPHOPT_BRDC,nav,rs,dts,&var,&svh);
-            r = geodist(rs, rr, e);//初始真实距离
-            traveltime= r / CLIGHT;//初始传播时间
-            //地球自转修正后的卫星位置，赛格纳效应
-            //多普勒  
-			for(k=0;k<3;k++)
-				Xsu[k]=r*e[k];
-			// e .* satspeed
-            Vt=dot(Xsu,rs+3,3);
-            Rsu=r;
-            Vr=-Vt/Rsu;
-            nameta=CLIGHT/FREQ1;
-            sv_time->fd=Vr/nameta;
-            flag=0;
-	    //printf("Debug:tau = %f, r = %f, traveltime = %f \n",tau,r,traveltime);
-            break;
-		}
-        i=i+1;
-        delt_t=traveltime;
-        t_sv0=t-traveltime;
+		sv_time->dist = r;
+        sv_time->codeTime=traveltime+dtrp/CLIGHT-dts[0];//
+        sv_time->carrierTime=traveltime+dtrp/CLIGHT-dts[0];
+        sv_time->t_svCodeTime=t-sv_time->codeTime;//准确的发射时刻
+        sv_time->t_svCarrierTime=t-sv_time->carrierTime;//准确的发射时刻
+        //计算多普勒初值sat speed ,rs[3-5]
+        eph2pos2speed(gpst2time(week,t_sv0),eph,rs,dts,&var);
+		//satpos(t_sv0,t_sv0,sat,EPHOPT_BRDC,nav,rs,dts,&var,&svh);
+        r = geodist(rs, rr, e);//初始真实距离
+        traveltime= r / CLIGHT;//初始传播时间
+        //地球自转修正后的卫星位置，赛格纳效应
+        //多普勒  
+		for(k=0;k<3;k++)
+			Xsu[k]=r*e[k];
+		// e .* satspeed
+        Vt=dot(Xsu,rs+3,3);
+        Rsu=r;
+        Vr=-Vt/Rsu;
+        nameta=CLIGHT/FREQ1;
+        sv_time->fd=Vr/nameta;
+        flag=0;
+	//printf("Debug:tau = %f, r = %f, traveltime = %f \n",tau,r,traveltime);
+        break;
+	}
+    i=i+1;
+    delt_t=traveltime;
+    t_sv0=t-traveltime;
 	printf("Debug:tau = %10.12f, r = %10.12f, traveltime = %10.12f \n",tau,r,traveltime);
 }
 return 0;
@@ -419,7 +419,7 @@ int getTimeModelStatic(T_MODEL *T, _init_paras *paras, nav_t *nav, int *sat, int
 			}
 			calculateTime(tow+i*space_update, week, paras->transTime_est,sat[k], eph, paras->rr, paras->ll, T[k].sv_time+i);
 			if((i%3 == 0) && (i != 0)){
-				printf("-------------i : %d \n",i);
+				//printf("-------------i : %d \n",i);
 				for(j=0;j<4;j++){
 					code_tau[j] = T[k].sv_time[i+j-3].codeTime;
 					carrier_tau[j] = T[k].sv_time[i+j-3].carrierTime;
@@ -675,7 +675,7 @@ int signalT(_init_paras setting, T_MODEL *T, SIGNAL_I *S, double t_user, int ok_
         if(T[i].PRN > MAXPRNGPS){
             t_sv=T[i].sv_time[0].t_svCodeTime;
             tow[i]=t_user-1;//floor(t_sv/2)*2;//TODO:: Galileo时间,奇数秒 2s/page, tow+=2, not sure
-            // 6000----代表一帧对应的 6000ms
+            // 2000----代表一帧对应的 2000ms
             //domon:: note for bug: make 4ms aligned for galileo system
             temp[i]=floor((t_sv-tow[i])*1000/4)*4;//get the int 4ms start to same with 4ms ca code
             double debug1= temp[i];
@@ -683,9 +683,9 @@ int signalT(_init_paras setting, T_MODEL *T, SIGNAL_I *S, double t_user, int ok_
         }
         else{
             t_sv=T[i].sv_time[0].t_svCodeTime;
-            tow[i]=t_user-6;//floor(t_sv/2)*2;//TODO:: Galileo时间, 2s/page, tow+=2, not sure
+            tow[i]=t_user-6;//floor(t_sv/2)*2;//TODO:: Galileo时间, 6s/page, tow+=6, not sure
             // 6000----代表一帧对应的 6000ms
-            //domon:: note for bug: make 4ms aligned for galileo system
+            //domon:: note for bug: make 1ms aligned for gps system
             temp[i]=floor((t_sv-tow[i])*1000);//get the int 1ms start to same with 1ms ca code
             double debug2= temp[i];
             frame[i]=5999-floor(temp[i]);//以整数毫秒为帧的起始，为了对其进行ca码与数据码对齐,暂时没有使用

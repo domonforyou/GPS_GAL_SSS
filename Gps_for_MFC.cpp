@@ -92,8 +92,11 @@ int prase_scenario(const char *dir,const char *filename){
 		g_paras.mode=DYN_MODE;
 		p1=local_paras[7];
 		sscanf(p1,"%2d:%2d:%2d",time,time+1,time+2);
-		if((p1 = strtok(local_paras[11], ";"))){
+		//change [11] to [10], add while to deal with the ; not , ... so strange 
+		if((p1 = strtok(local_paras[10], ";"))){
 			strcpy(g_paras.Kml_Path,p1);
+			while((p1 = strtok(NULL, ";")))
+				strcpy(g_paras.Kml_Path,p1);
 		}
 		else{
 			printf("ERROR: scn kml not found or file wrong \n");

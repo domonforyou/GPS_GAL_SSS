@@ -52,7 +52,7 @@ typedef struct{
 	double y;
 	double z;
 }_user_pos;
-
+//Gal CA code
 typedef struct{
 	int sat;
     unsigned char data[4092];
@@ -62,7 +62,7 @@ typedef struct{
     int sat;
     int data[1024];
 }_gps_ca_code;
-
+//导航电文
 typedef struct{
 	int sat;
     unsigned char *data;
